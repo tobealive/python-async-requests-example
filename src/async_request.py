@@ -2,7 +2,7 @@ import asyncio, time, requests
 from aiohttp import ClientSession
 
 urls = requests.get(
-	"https://gist.githubusercontent.com/tobealive/b2c6e348dac6b3f0ffa150639ad94211/raw/e90479f11e179b7f65c60a8477f060e740061815/100-popular-urls.txt"
+	"https://gist.githubusercontent.com/tobealive/b2c6e348dac6b3f0ffa150639ad94211/raw/31524a7aac392402e354bced9307debd5315f0e8/100-popular-urls.txt"
 ).text.split('\n')
 durations: list[float] = []
 errorNum = 0
