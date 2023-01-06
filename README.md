@@ -1,6 +1,6 @@
 # Python-async-requests-example
 
-Example in python that focuses on concurrent / parallel async requests.
+Example in python that focuses on concurrent async requests.
 
 ```
 1: 6.04s
@@ -25,7 +25,7 @@ Iterations: 1. Total errors: 0.
 Time to request 100 google searches: 3.75s.
 ```
 
-<sub>The geographical location from which the requests were sent was Germany</sub>
+<sub>The requests were sent from Germany</sub>
 
 ## Equivalents in other languages
 
