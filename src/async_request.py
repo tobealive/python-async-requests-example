@@ -3,7 +3,8 @@ from aiohttp import ClientSession
 from typing import TypedDict
 from enum import Enum
 
-urlSource = "https://gist.githubusercontent.com/tobealive/b2c6e348dac6b3f0ffa150639ad94211/raw/31524a7aac392402e354bced9307debd5315f0e8/100-popular-urls.txt"
+url_source = "https://gist.githubusercontent.com/tobealive/b2c6e348dac6b3f0ffa150639ad94211/raw/31524a7aac392402e354bced9307debd5315f0e8/100-popular-urls.txt"
+seperator = "-------------------------------------------------------------------------------"
 
 ResultStatus = Enum('ResultStatus', 'SUCCESS ERROR TIMEOUT PENDING')
 TestResult = dict[str, TypedDict("TestResultData", status=ResultStatus, transferred=int, time=float)]
@@ -13,7 +14,7 @@ results: TestResult = {}
 summary: Stats = {"time": 0, "successes": 0, "errors": 0, "timeouts": 0, "transferred": 0}
 outputs: list[str] = []
 
-iterations = 1
+iterations = 10
 single_source = False
 verbose = False
 
@@ -25,7 +26,7 @@ def prep_urls() -> list[str]:
 			urls.append(f"google.com/search?q={i}")
 		return urls
 
-	urls = requests.get(urlSource).text.split('\n')
+	urls = requests.get(url_source).text.split('\n')
 	urls = list(dict.fromkeys(urls))[:100]  # remove duplicats limit to 100 urls
 	return urls
 
@@ -105,27 +106,21 @@ def main():
 		outputs.append(output)
 
 		if verbose:
-			print(f"""
--------------------------------------------------------------------------------
-{output}
-""")
+			print(f"{seperator}\n{output}\n")
 
 	if len(outputs) <= 1 and verbose:
 		return
 
-	print("""
--------------------------------------------------------------------------------\
-""")
+	print(f"{seperator}")
 
 	for output in outputs:
 		print(output)
 
 	summary['transferred'] = summary['transferred'] / (1024 * 1024)
 
-	print(f"""\
--------------------------------------------------------------------------------
+	print(f"""{seperator}
 Runs: {iterations}. Average Time: {summary['time'] / float(len(outputs)):.2f}s. Total Errors: {summary['errors']}. Total Timeouts: {summary['timeouts']}. Transferred: {summary['transferred']:.2f} MB ({summary['transferred']/summary['time']:.2f} MB/s).
--------------------------------------------------------------------------------
+{seperator}
 """)
 
 
