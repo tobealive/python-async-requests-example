@@ -3,59 +3,30 @@
 Example in python that focuses on concurrent async requests.
 
 ```
-1: 6.04s
-2: 6.87s
-3: 6.82s
-4: 6.38s
-5: 10.75s
-6: 6.41s
-7: 6.02s
-8: 11.53s
-9: 11.07s
-10: 7.35s
-
-Iterations: 10. Total errors: 10.
-Average time to request 100 websites: 7.92s.
+-------------------------------------------------------------------------------
+1: Time: 6.91. Sent: 99. Successes: 98. Errors: 1. Timeouts: 0. Transferred: 24.52 MB (3.55 MB/s).
+2: Time: 6.87. Sent: 99. Successes: 98. Errors: 1. Timeouts: 0. Transferred: 24.49 MB (3.56 MB/s).
+3: Time: 6.95. Sent: 99. Successes: 98. Errors: 1. Timeouts: 0. Transferred: 24.47 MB (3.52 MB/s).
+4: Time: 6.71. Sent: 99. Successes: 98. Errors: 1. Timeouts: 0. Transferred: 24.55 MB (3.66 MB/s).
+5: Time: 6.76. Sent: 99. Successes: 98. Errors: 1. Timeouts: 0. Transferred: 24.37 MB (3.60 MB/s).
+6: Time: 7.17. Sent: 99. Successes: 98. Errors: 1. Timeouts: 0. Transferred: 24.49 MB (3.42 MB/s).
+7: Time: 6.66. Sent: 99. Successes: 98. Errors: 1. Timeouts: 0. Transferred: 24.55 MB (3.68 MB/s).
+8: Time: 6.89. Sent: 99. Successes: 98. Errors: 1. Timeouts: 0. Transferred: 24.51 MB (3.56 MB/s).
+9: Time: 6.82. Sent: 99. Successes: 98. Errors: 1. Timeouts: 0. Transferred: 24.42 MB (3.58 MB/s).
+10: Time: 9.52. Sent: 99. Successes: 98. Errors: 1. Timeouts: 0. Transferred: 24.51 MB (2.58 MB/s).
+-------------------------------------------------------------------------------
+Runs: 10. Average Time: 7.13s. Total Errors: 10. Total Timeouts: 0. Transferred: 244.88 MB (3.44 MB/s).
+-------------------------------------------------------------------------------
 ```
 
 Request only `google.com/search?q=%s` (where the search queries are the numbers from 1 to 100)
 
 ```
-Iterations: 1. Total errors: 0.
-Time to request 100 google searches: 3.75s.
+Time: 1.26s. Sent: 100. Successes: 100. Errors: 0. Timeouts: 0. Transferred: 0.62 MB (0.50 MB/s).
 ```
 
 <sub>The requests were sent from Germany</sub>
 
 ## Equivalents in other languages
 
-<details>
-<summary><b>Nim</b> - <code>Average time to request 100 websites: 9.98s.</code></summary>
-
-<br>
-
-Repository: https://github.com/tobealive/nim-async-requests-example
-
-```
-1: 14.87s
-2: 9.22s
-3: 8.32s
-4: 9.56s
-5: 13.71s
-6: 8.30s
-7: 7.99s
-8: 8.87s
-9: 8.99s
-10: 9.94s
-Iterations: 10. Total errors: 94.
-Average time to request 100 websites: 9.98s.
-```
-
-Request only `google.com/search?q=%s` (where the search queries are the numbers from 1 to 100)
-
-```
-Iterations: 1. Total errors: 0.
-Time to request 100 google searches: 3.75s.
-```
-
-</details>
+- Nim: https://github.com/tobealive/nim-async-requests-example
