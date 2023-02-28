@@ -32,9 +32,7 @@ outputs: list[str] = []
 
 def prep_urls() -> list[str]:
 	if single_source:
-		urls = []
-		for i in range(100):
-			urls.append(f"google.com/search?q={i}")
+		urls = [(f"google.com/search?q={i}") for i in range(100)]
 		return urls
 
 	urls = requests.get(url_source).text.split('\n')
