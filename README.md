@@ -2,6 +2,8 @@
 
 Example in python that focuses on concurrent async requests.
 
+## Test runs
+
 ```
 -------------------------------------------------------------------------------
 1: Time: 6.91. Sent: 99. Successes: 98. Errors: 1. Timeouts: 0. Transferred: 24.52 MB (3.55 MB/s).
@@ -19,14 +21,21 @@ Runs: 10. Average Time: 7.13s. Total Errors: 10. Total Timeouts: 0. Transferred:
 -------------------------------------------------------------------------------
 ```
 
-Request only `google.com/search?q=%s` (where the search queries are the numbers from 1 to 100)
+---
+
+Single source requests (for simplicity `google.com/search?q=<1..100>`)
 
 ```
 Time: 1.26s. Sent: 100. Successes: 100. Errors: 0. Timeouts: 0. Transferred: 0.62 MB (0.50 MB/s).
 ```
 
-<sub>The requests were sent from Germany</sub>
+---
+
+Supplementary information:
+
+- The requests were sent from Germany
 
 ## Equivalents in other languages
 
 - Nim: https://github.com/tobealive/nim-async-requests-example
+- Haskell: https://github.com/tobealive/haskell-async-requests-example
