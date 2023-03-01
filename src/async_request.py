@@ -10,21 +10,9 @@ single_source = False
 verbose = True
 timeout = 5
 
-Stats = TypedDict("Stats", time=float, successes=int, errors=int, timeouts=int, transferred=float)
 ResultStatus = Enum('ResultStatus', 'SUCCESS ERROR PENDING')
-
-
-class TestItem:
-
-	def __init__(self, url: str, status: ResultStatus, transferred: int, time: float):
-		self.url = url
-		self.status = status
-		self.transferred = transferred
-		self.time = time
-
-	def __str__(self):
-		return f"{self.url}, {self.status}, {self.transferred}, {self.time}"
-
+TestResult = TypedDict("TestResult", url=str, status=ResultStatus, transferred=int, time=float)
+Stats = TypedDict("Stats", time=float, successes=int, errors=int, timeouts=int, transferred=float)
 
 summary: Stats = {"time": 0, "successes": 0, "errors": 0, "timeouts": 0, "transferred": 0}
 outputs: list[str] = []
@@ -40,51 +28,45 @@ def prep_urls() -> list[str]:
 	return urls
 
 
-async def get_http_resp(session: ClientSession, test_item: TestItem) -> TestItem:
+async def get_http_resp(session: ClientSession, url: str) -> TestResult:
+	test_result: TestResult = {"url": url, "status": ResultStatus.PENDING, "transferred": 0, "time": 0}
 	start_time = time.time()
 
 	try:
-		async with session.get(f"http://www.{test_item.url}") as resp:
+		async with session.get(f"http://www.{url}", timeout=timeout) as resp:
 			response = await resp.read()
 			res_len = len(response)
-			test_item.status = ResultStatus.SUCCESS
-			test_item.transferred = res_len
-			test_item.time = time.time() - start_time
+			test_result["status"] = ResultStatus.SUCCESS
+			test_result["transferred"] = res_len
+			test_result["time"] = time.time() - start_time
 			if verbose:
-				print(f"{test_item.url} - Transferred: {res_len} Bytes. Time: {test_item.time:.4f}s.")
+				print(f"{url} — Transferred: {res_len} Bytes. Time: {test_result['time']:.2f}s.")
 	except Exception as e:
-		global errorNum
-		test_item.time = time.time() - start_time
-		test_item.status = ResultStatus.ERROR
+		test_result["time"] = time.time() - start_time
+		test_result["status"] = ResultStatus.ERROR
 		if verbose:
-			print(f"Error: {test_item.url} - {e.__class__}")
+			print(f"Error: {url} — {e.__class__}")
 
-	return test_item
+	return test_result
 
 
-async def spawn_requests(test_items: list[TestItem]) -> list[TestItem]:
+async def spawn_requests(urls: list[str]) -> list[TestResult]:
 	async with ClientSession() as session:
-		tasks = [get_http_resp(session, test_item) for test_item in test_items]
-		try:
-			await asyncio.wait_for(asyncio.gather(*tasks), timeout=5)
-		except asyncio.TimeoutError:
-			await asyncio.gather(*tasks, return_exceptions=True)
-
-	return test_items
+		return await asyncio.gather(*[get_http_resp(session, url) for url in urls])
 
 
-def eval(results: list[TestItem]) -> Stats:
+def eval(results: list[TestResult]) -> Stats:
 	stats: Stats = {"time": 0.0, "successes": 0, "errors": 0, "timeouts": 0, "transferred": 0}
 	for res in results:
-		stats["transferred"] += res.transferred
-		stats["successes"] += res.status == ResultStatus.SUCCESS
-		stats["errors"] += res.status == ResultStatus.ERROR
-		stats["timeouts"] += res.status == ResultStatus.PENDING
+		stats["transferred"] += res["transferred"]
+		stats["successes"] += res["status"] == ResultStatus.SUCCESS
+		stats["errors"] += res["status"] == ResultStatus.ERROR
+		stats["timeouts"] += res["status"] == ResultStatus.PENDING
 
-		summary["transferred"] += res.transferred
-		summary["successes"] += res.status == ResultStatus.SUCCESS
-		summary["errors"] += res.status == ResultStatus.ERROR
-		summary["timeouts"] += res.status == ResultStatus.PENDING
+		summary["transferred"] += res["transferred"]
+		summary["successes"] += res["status"] == ResultStatus.SUCCESS
+		summary["errors"] += res["status"] == ResultStatus.ERROR
+		summary["timeouts"] += res["status"] == ResultStatus.PENDING
 
 	stats['transferred'] = stats['transferred'] / (1024 * 1024)
 
@@ -93,16 +75,13 @@ def eval(results: list[TestItem]) -> Stats:
 
 def main():
 	urls = prep_urls()
-	# prepare test items
-	test_items = [TestItem(url=url, status=ResultStatus.PENDING, transferred=0, time=0.0) for url in urls]
-
 	print("Starting requests...")
 
 	for i in range(iterations):
 		print(f"Run: {i + 1}/{iterations}")
 
 		start = time.time()
-		results = asyncio.run(spawn_requests(test_items))
+		results = asyncio.run(spawn_requests(urls))
 		duration = time.time() - start
 
 		stats = eval(results)
